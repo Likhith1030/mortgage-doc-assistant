@@ -1,0 +1,120 @@
+MORTGAGE COMPLIANCE RULES — KNOWLEDGE BASE
+==========================================
+Last updated: 2024-01-01
+Source: Federal lending regulations, CFPB guidelines, internal policy
+
+---
+
+SECTION 1: DEBT-TO-INCOME RATIO (DTI)
+--------------------------------------
+Rule: The borrower's total monthly debt obligations divided by gross monthly income
+must not exceed 43% for Qualified Mortgage (QM) status.
+- Front-end DTI (housing costs only): Should not exceed 28%
+- Back-end DTI (all debts): Hard cap at 43% for QM; up to 50% with compensating factors
+- Compensating factors that allow higher DTI: significant cash reserves (12+ months PITI),
+  low LTV (< 70%), strong credit score (> 740)
+
+Action required: Calculate and document both front-end and back-end DTI.
+Red flag: DTI > 43% with no compensating factors = automatic compliance review required.
+
+---
+
+SECTION 2: LOAN-TO-VALUE RATIO (LTV)
+--------------------------------------
+Rule: LTV is the loan amount divided by the lesser of appraised value or purchase price.
+- Conventional loans: Max LTV 97% (requires PMI if > 80%)
+- FHA loans: Max LTV 96.5% (580+ credit score) or 90% (500-579 credit score)
+- VA loans: Up to 100% LTV (no PMI required)
+- USDA loans: Up to 100% LTV in eligible rural areas
+- Jumbo loans: Max LTV typically 80-85%
+
+Action required: Order appraisal from approved AMC (Appraisal Management Company).
+Red flag: Purchase price significantly above appraised value — potential fraud risk.
+
+---
+
+SECTION 3: REQUIRED DOCUMENT CHECKLIST
+----------------------------------------
+All applications must include:
+  [ ] Completed 1003 Uniform Residential Loan Application
+  [ ] Government-issued photo ID (driver's license or passport)
+  [ ] Social Security card or ITIN documentation
+  [ ] Last 2 years W-2 forms (all employers)
+  [ ] Last 2 years signed federal tax returns (all pages, all schedules)
+  [ ] Last 30 days pay stubs (most recent)
+  [ ] Last 2 months bank statements (all pages, all accounts)
+  [ ] Proof of down payment source (gift letter if applicable)
+  [ ] Purchase agreement (for purchase loans)
+  [ ] Current mortgage statement (for refinances)
+  [ ] HOA documents (if applicable)
+  [ ] Self-employed borrowers: 2 years business tax returns + YTD P&L
+
+Red flag: Any altered, whited-out, or inconsistent documents — refer to fraud unit.
+
+---
+
+SECTION 4: EMPLOYMENT AND INCOME VERIFICATION
+-----------------------------------------------
+Rule: Borrower must demonstrate 2-year employment history.
+- W-2 employees: Verify via pay stubs + W-2s + verbal VOE (Verification of Employment)
+- Self-employed: 2 years business returns; income averaged over 2 years
+- Commission/bonus income: Averaged over 2 years; must have 2-year history
+- Part-time income: Acceptable if 2-year history and likely to continue
+- Rental income: 75% of gross rents (to account for vacancy); Schedule E documentation required
+- Gaps in employment: Less than 6 months acceptable; greater than 6 months requires letter of explanation
+
+---
+
+SECTION 5: CREDIT SCORE REQUIREMENTS
+--------------------------------------
+- Conventional: Minimum 620 (660+ for better pricing)
+- FHA: Minimum 580 for 96.5% LTV; 500-579 for 90% LTV
+- VA: No official minimum; lender typically requires 620
+- USDA: Minimum 640
+- Jumbo: Typically minimum 720
+
+Note: Use the middle score of the three bureaus (Equifax, Experian, TransUnion).
+For multiple borrowers: use the lower of the two middle scores.
+
+---
+
+SECTION 6: FAIR LENDING — ECOA AND HMDA
+-----------------------------------------
+ECOA (Equal Credit Opportunity Act) requires:
+- Do not discriminate based on: race, color, religion, national origin, sex,
+  marital status, age, receipt of public assistance, or exercise of consumer rights.
+- If denying credit: Issue Adverse Action Notice within 30 days with specific reasons.
+- Cannot ask about plans for children or family status.
+
+HMDA (Home Mortgage Disclosure Act) requires:
+- Collect and report race, ethnicity, sex, and income data on all applications.
+- Data is reported annually to CFPB.
+- Do not use this data in credit decisions.
+
+Red flag: Any denial reason that correlates with protected class characteristics
+without documented creditworthiness basis → immediate compliance escalation.
+
+---
+
+SECTION 7: QUALIFIED MORTGAGE (QM) SAFE HARBOR
+-------------------------------------------------
+To qualify for QM Safe Harbor, the loan must:
+  1. Have a loan term of 30 years or less
+  2. Have no negative amortization (balance cannot increase)
+  3. Have no interest-only payments
+  4. Have no balloon payments (except for certain small creditor loans)
+  5. Have points and fees not exceeding 3% of the loan amount
+  6. Be underwritten to the maximum scheduled payment
+  7. Verify and document the borrower's income, assets, and financial obligations
+
+Failure to meet QM requirements does not automatically disqualify the loan but
+removes the lender's legal protection against "ability to repay" lawsuits.
+
+---
+
+SECTION 8: TRID (TILA-RESPA INTEGRATED DISCLOSURE)
+----------------------------------------------------
+- Loan Estimate (LE): Must be delivered within 3 business days of application.
+- Closing Disclosure (CD): Must be delivered at least 3 business days before closing.
+- Changes that require new LE: APR increase > 1/8%, loan product change, prepayment penalty added.
+- Keep all disclosure delivery records (timestamps, method of delivery).

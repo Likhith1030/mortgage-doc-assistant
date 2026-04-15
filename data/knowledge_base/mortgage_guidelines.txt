@@ -1,0 +1,108 @@
+INTERNAL MORTGAGE PROCESSING GUIDELINES
+=======================================
+Version 3.2 | Retail Lending Division
+
+---
+
+LOAN TYPES AND BASIC PARAMETERS
+---------------------------------
+Conventional (Fannie Mae / Freddie Mac):
+  - Loan limits: $766,550 (single family, 2024); higher in high-cost areas
+  - Occupancy: Primary, secondary, investment
+  - PMI required if LTV > 80%
+
+FHA (Federal Housing Administration):
+  - Loan limits vary by county (check HUD website)
+  - Upfront MIP: 1.75% of loan amount (can be financed)
+  - Annual MIP: 0.55%–1.05% depending on LTV and term
+  - Occupancy: Primary residence only
+
+VA (Veterans Affairs):
+  - Available to eligible veterans, active duty, and surviving spouses
+  - Funding fee: 1.25%–3.3% (waived if service-connected disability)
+  - No PMI, no minimum down payment
+  - Certificate of Eligibility (COE) required
+
+USDA (Rural Development):
+  - Property must be in USDA-eligible rural area
+  - Guarantee fee: 1% upfront + 0.35% annual
+  - Income limits apply (usually 115% of area median income)
+
+Jumbo:
+  - Loan amount above conforming limit
+  - Portfolio products — kept on bank's balance sheet
+  - Stricter underwriting: typically 720+ credit, 80% LTV max, 12 months reserves
+
+---
+
+PROCESSING STAGES
+------------------
+Stage 1: APPLICATION (Day 1-3)
+  - Borrower submits 1003 application
+  - Pull tri-merge credit report
+  - Issue Loan Estimate within 3 business days
+  - Collect initial document package
+
+Stage 2: PROCESSING (Day 3-15)
+  - Processor reviews and orders missing items
+  - Order appraisal
+  - Order title search
+  - Verify employment (VOE)
+  - Upload complete file to Encompass (LOS)
+
+Stage 3: UNDERWRITING (Day 15-25)
+  - UW reviews complete package
+  - Issues: Approval, Conditional Approval, Suspend, or Deny
+  - Conditional approval: borrower must satisfy conditions before closing
+
+Stage 4: CLOSING PREPARATION (Day 25-30)
+  - Clear all UW conditions
+  - Title insurance commitment
+  - Hazard insurance binder
+  - Issue Closing Disclosure 3 business days before closing
+
+Stage 5: CLOSING AND FUNDING
+  - Wet signing (or remote online notarization where permitted)
+  - Wire funds
+  - Record deed of trust / mortgage
+
+---
+
+APPRAISAL GUIDELINES
+---------------------
+- Must be ordered through approved AMC (Appraisal Management Company) list
+- Appraiser must be state-licensed and on approved roster
+- Appraisal valid for 120 days (conventional) or 180 days (FHA/VA)
+- Reconsideration of Value (ROV) allowed if borrower has supporting comps
+- Desktop appraisal allowed for LTV ≤ 90% with strong credit profile
+
+---
+
+FRAUD INDICATORS — FLAG FOR REVIEW
+------------------------------------
+Document fraud:
+  - Altered or whited-out information on bank statements
+  - Round-dollar deposits immediately before application
+  - Employer phone numbers resolving to residential lines
+  - Social Security numbers that don't match credit bureau data
+
+Income fraud:
+  - Income inconsistent with stated occupation
+  - Tax returns with no AGI deductions (implausible)
+  - Multiple jobs at same employer address
+
+Property fraud:
+  - Purchase price significantly above list price or market
+  - Buyer and seller sharing same address
+  - Multiple applications on same property
+
+Action: Flag → complete SAR (Suspicious Activity Report) if fraud confirmed.
+
+---
+
+DOCUMENT RETENTION REQUIREMENTS
+---------------------------------
+- All loan files: Minimum 3 years from date of loan action
+- HMDA data: 3 years
+- Fair lending records: 25 months from date of action
+- Electronic storage acceptable if retrievable within 24 hours

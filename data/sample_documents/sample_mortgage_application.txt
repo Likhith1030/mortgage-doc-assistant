@@ -1,0 +1,124 @@
+UNIFORM RESIDENTIAL LOAN APPLICATION (1003) — SAMPLE
+=====================================================
+Loan Number: LOAN-2024-0042
+Application Date: March 15, 2024
+
+SECTION I — LOAN INFORMATION
+------------------------------
+Loan Purpose: Purchase
+Property Type: Single-family residence
+Occupancy: Primary residence
+Loan Amount Requested: $485,000
+Purchase Price: $560,000
+Down Payment: $75,000 (13.4% — Source: savings account)
+Interest Rate: 7.125% (30-year fixed)
+
+SECTION II — BORROWER INFORMATION
+------------------------------------
+Borrower Name: Michael R. Thompson
+Date of Birth: July 14, 1985
+SSN (last 4): 7821
+Current Address: 4412 Maple Drive, Austin, TX 78701
+Phone: (512) 555-0187
+Email: m.thompson@email.com
+Years at current address: 6
+
+SECTION III — EMPLOYMENT INFORMATION
+--------------------------------------
+Current Employer: Vertex Technologies, Inc.
+Position: Senior Software Engineer
+Start Date: February 2019 (5 years 1 month)
+Employment Type: W-2 Employee
+Employer Address: 2100 Technology Blvd, Austin, TX 78758
+Employer Phone: (512) 555-0220
+
+Previous Employer: DataStream Corp
+Position: Software Engineer
+Dates: January 2016 – January 2019 (3 years)
+
+SECTION IV — INCOME
+--------------------
+Base Salary (monthly gross): $12,500
+Annual Bonus (2023): $18,000 (2-year average: $16,500)
+Total Monthly Income: $13,875 (including averaged bonus)
+
+Supporting documents noted:
+  - W-2 2022: $148,000 gross
+  - W-2 2023: $151,200 gross
+  - Pay stubs (February and March 2024): $5,897.44 semi-monthly
+  - Tax returns 2022 and 2023: Filed jointly with spouse
+
+Co-Borrower Name: Jennifer A. Thompson
+Employment: Registered Nurse, St. David's Medical Center
+Monthly Income: $7,200 gross
+W-2 2023: $86,400
+
+Combined monthly gross income: $21,075
+
+SECTION V — ASSETS
+--------------------
+Checking Account — Chase Bank (ending 4892): $28,400
+Savings Account — Chase Bank (ending 3301): $91,200
+401(k) — Fidelity: $187,500 (60% vested = $112,500 accessible)
+Investment Account — Schwab: $43,800
+Total Liquid Assets: $275,400
+
+Down payment source: Chase Savings Account (ending 3301)
+Closing cost estimate: $11,200 (seller paying $5,000; borrower responsible for $6,200)
+
+SECTION VI — LIABILITIES
+--------------------------
+Auto loan — Toyota Financial: $389/month, balance $14,200 (18 months remaining)
+Student loans — Navient: $280/month, balance $21,400
+Credit card — Chase Sapphire: $0 balance, $15,000 limit
+Credit card — Amex: $1,200 balance, $10,000 limit (minimum $35/month)
+
+Total monthly debt payments: $704/month
+
+SECTION VII — REAL ESTATE OWNED
+---------------------------------
+None (first-time homebuyer)
+
+SECTION VIII — DECLARATIONS
+-----------------------------
+Outstanding judgments: No
+Bankruptcy in last 7 years: No
+Property foreclosure in last 7 years: No
+Co-signer on other obligations: No
+U.S. Citizen: Yes
+
+SECTION IX — CREDIT
+---------------------
+Equifax: 742
+Experian: 748
+TransUnion: 739
+Middle score used: 742
+
+SECTION X — PROPERTY INFORMATION
+----------------------------------
+Property Address: 889 Stonefield Lane, Austin, TX 78731
+Appraised Value: $558,000 (appraisal ordered March 20, 2024)
+Property Tax (annual): $8,400
+Homeowner's Insurance (annual): $2,400
+HOA: None
+
+SECTION XI — CALCULATIONS
+--------------------------
+LTV: $485,000 / $558,000 = 86.9% → PMI required
+Front-end DTI: ($2,847 PITI + $0 HOA) / $21,075 = 13.5%
+  P&I at 7.125%: $3,267
+  Taxes: $700/month
+  Insurance: $200/month
+  PMI (estimated at 0.52%): $210/month
+  PITI total: $4,377
+
+Back-end DTI: ($4,377 PITI + $704 other debts) / $21,075 = 24.1%
+
+UNDERWRITER NOTES:
+  - Strong credit profile (742 middle score)
+  - Significant assets ($275K liquid; covers 6+ months PITI)
+  - Stable employment (5+ years same employer)
+  - DTI well within QM limits
+  - PMI required; LTV 86.9%
+  - File appears complete pending: final appraisal report, title commitment
+  - RECOMMENDATION: Conditional Approval pending appraisal and title clear
