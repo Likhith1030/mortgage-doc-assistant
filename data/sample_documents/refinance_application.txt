@@ -1,0 +1,122 @@
+UNIFORM RESIDENTIAL LOAN APPLICATION (1003) — REFINANCE SAMPLE
+===============================================================
+Loan Number: LOAN-2024-0087
+Application Date: April 2, 2024
+
+SECTION I — LOAN INFORMATION
+------------------------------
+Loan Purpose: Rate-and-Term Refinance
+Property Type: Single-family residence
+Occupancy: Primary residence
+Loan Amount Requested: $320,000
+Current Loan Balance: $334,500
+Appraised Value: $410,000
+New Interest Rate: 6.75% (30-year fixed)
+Existing Rate: 8.25% (30-year fixed, originated 2022)
+Estimated Monthly Savings: $412/month
+
+SECTION II — BORROWER INFORMATION
+------------------------------------
+Borrower Name: Sandra L. Nguyen
+Date of Birth: March 3, 1979
+SSN (last 4): 4417
+Current Address: 2218 Riverside Court, Denver, CO 80202
+Phone: (720) 555-0344
+Email: s.nguyen@protonmail.com
+Years at current address: 4
+
+SECTION III — EMPLOYMENT INFORMATION
+--------------------------------------
+Current Employer: Colorado Department of Health
+Position: Public Health Administrator
+Start Date: September 2015 (8 years 7 months)
+Employment Type: Government / W-2 Employee
+Employer Address: 4300 Cherry Creek Drive S, Denver, CO 80246
+Employer Phone: (303) 555-0100
+
+No previous employer gap — continuous government employment since 2011.
+
+SECTION IV — INCOME
+--------------------
+Base Salary (monthly gross): $9,166
+Overtime (2-year average): $620/month
+Total Monthly Income: $9,786
+
+Supporting documents noted:
+  - W-2 2022: $108,200 gross
+  - W-2 2023: $112,800 gross
+  - Pay stubs (March 2024): $4,325.50 bi-weekly
+  - Tax returns 2022 and 2023: Filed single
+
+SECTION V — ASSETS
+--------------------
+Checking Account — Wells Fargo (ending 7741): $14,200
+Savings Account — Wells Fargo (ending 9903): $38,600
+403(b) — TIAA: $224,000 (100% vested)
+Total Liquid Assets: $276,800
+
+Closing cost estimate: $7,400 (rolling into loan)
+Cash-out at closing: $0 (rate-and-term only)
+
+SECTION VI — LIABILITIES
+--------------------------
+Auto loan — Honda Financial: $298/month, balance $8,900 (30 months remaining)
+Student loans — MOHELA: $410/month, balance $29,200
+Credit card — Capital One: $0 balance, $8,000 limit
+Credit card — Discover: $550 balance, $6,000 limit (minimum $20/month)
+
+Total monthly debt payments: $728/month
+
+SECTION VII — REAL ESTATE OWNED
+---------------------------------
+Subject Property: 2218 Riverside Court, Denver, CO 80202
+Current market value: $410,000
+Current mortgage balance: $334,500
+Monthly payment (PITI): $2,680/month
+
+SECTION VIII — DECLARATIONS
+-----------------------------
+Outstanding judgments: No
+Bankruptcy in last 7 years: No
+Property foreclosure in last 7 years: No
+Co-signer on other obligations: No
+U.S. Citizen: Yes
+12-month mortgage history: 0x30, 0x60, 0x90 (clean payment record)
+
+SECTION IX — CREDIT
+---------------------
+Equifax: 761
+Experian: 755
+TransUnion: 768
+Middle score used: 761
+
+SECTION X — PROPERTY INFORMATION
+----------------------------------
+Property Address: 2218 Riverside Court, Denver, CO 80202
+Appraised Value: $410,000 (appraisal ordered April 8, 2024)
+Property Tax (annual): $3,960
+Homeowner's Insurance (annual): $1,800
+HOA: $150/month (Riverside Court HOA)
+
+SECTION XI — CALCULATIONS
+--------------------------
+LTV: $320,000 / $410,000 = 78.0% → No PMI required
+Front-end DTI: ($2,180 PITI) / $9,786 = 22.3%
+  P&I at 6.75%: $2,076
+  Taxes: $330/month
+  Insurance: $150/month
+  PMI: $0 (LTV below 80%)
+  HOA: $150/month
+  PITI total: $2,706
+
+Back-end DTI: ($2,706 PITI + $728 other debts) / $9,786 = 34.6%
+
+UNDERWRITER NOTES:
+  - Excellent credit profile (761 middle score)
+  - Clean 12-month mortgage history
+  - Stable long-term government employment (8+ years)
+  - LTV 78% — PMI not required
+  - DTI well within QM limits (34.6%)
+  - Tangible net benefit: $412/month savings, rate drops 1.5%
+  - Closing costs financed into loan (standard for rate-and-term refi)
+  - RECOMMENDATION: Clear to Close pending final appraisal confirmation and title update

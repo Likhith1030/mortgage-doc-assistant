@@ -1,41 +1,25 @@
-"""
-agents/compliance_checker.py — Check a mortgage application against regulatory rules.
-
-WORKFLOW:
-  1. Load the compliance rules from the knowledge base (plain text file).
-  2. Load the mortgage application document chunks.
-  3. For each rule category, ask the LLM: "Does this application satisfy this rule?"
-  4. Return a structured compliance report with PASS / FAIL / NEEDS REVIEW flags.
-
-WHY A SEPARATE KNOWLEDGE BASE?
-  Compliance rules change frequently (TRID, QM, HMDA updates). Keeping them in
-  a plain text file means compliance officers can update rules without touching code.
-
-RULES COVERED (see data/knowledge_base/compliance_rules.txt):
-  - Debt-to-Income ratio thresholds
-  - Loan-to-Value ratio limits
-  - Required document checklist
-  - Fair lending (ECOA, HMDA) flags
-  - QM (Qualified Mortgage) safe harbor checks
-"""
-
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
+import json
 
 from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain_core.documents import Document
+from langchain_core.messages import HumanMessage, SystemMessage
+from pydantic import BaseModel
 
 import config
-from core.retrieval import build_qa_chain, ask
-from core.embeddings import build_vector_store, load_vector_store
+from core.embeddings import build_vector_store
 from core.document_processor import process_document
+
+
+class _RuleCheck(BaseModel):
+    status: str  # "PASS", "FAIL", "NEEDS REVIEW"
+    reasoning: str
 
 
 @dataclass
 class ComplianceResult:
     rule_name: str
-    status: str          # "PASS", "FAIL", "NEEDS REVIEW"
+    status: str
     detail: str
     sources: List[str] = field(default_factory=list)
 
@@ -68,8 +52,20 @@ class ComplianceReport:
             lines.append(f"  [{icon}] {r.rule_name}: {r.detail}")
         return "\n".join(lines)
 
+    def to_dict(self) -> dict:
+        return {
+            "document_name": self.document_name,
+            "results": [
+                {"rule": r.rule_name, "status": r.status, "detail": r.detail, "sources": r.sources}
+                for r in self.results
+            ],
+            "totals": {
+                "pass": len(self.passed),
+                "fail": len(self.failed),
+                "review": len(self.needs_review),
+            },
+        }
 
-# ── Compliance checks ─────────────────────────────────────────────────────────
 
 COMPLIANCE_CHECKS = [
     {
@@ -78,7 +74,7 @@ COMPLIANCE_CHECKS = [
     },
     {
         "rule_name": "Loan-to-Value Ratio (LTV)",
-        "question": "What is the loan amount and the appraised property value? Calculate the LTV. Is it within acceptable limits (typically ≤ 80% for conventional, ≤ 96.5% for FHA)?",
+        "question": "What is the loan amount and the appraised property value? Calculate the LTV. Is it within acceptable limits (≤ 80% for conventional, ≤ 96.5% for FHA)?",
     },
     {
         "rule_name": "Required Document Checklist",
@@ -102,43 +98,67 @@ COMPLIANCE_CHECKS = [
     },
 ]
 
-
-def _parse_status(answer: str) -> str:
-    """Infer PASS/FAIL/NEEDS REVIEW from the LLM's free-text answer."""
-    lower = answer.lower()
-    if any(w in lower for w in ["pass", "yes", "compliant", "satisfied", "meets", "within"]):
-        return "PASS"
-    if any(w in lower for w in ["fail", "no ", "non-compliant", "does not", "missing", "below minimum", "exceed"]):
-        return "FAIL"
-    return "NEEDS REVIEW"
+_SYSTEM = (
+    "You are a mortgage compliance analyst. Review the document context and evaluate the compliance check. "
+    "Be precise — cite specific numbers from the document (e.g., 'DTI is 38.2%, below the 43% threshold'). "
+    "If the information needed to evaluate the check is absent, respond with NEEDS REVIEW and state what is missing."
+)
 
 
-def run_compliance_check(document_path: str) -> ComplianceReport:
+def run_compliance_check(
+    document_path: str,
+    store_path: Optional[str] = None,
+    report_save_path: Optional[str] = None,
+) -> ComplianceReport:
     """
-    Run all compliance checks against a mortgage document.
+    Run compliance checks on a mortgage document.
 
-    Args:
-        document_path: Path to PDF or text file of the mortgage application.
-
-    Returns:
-        A ComplianceReport with per-rule results.
+    store_path: path to save/load the FAISS vector store (per-document isolation).
+    report_save_path: if provided, save the JSON report to this file path.
     """
     chunks = process_document(document_path)
-    store  = build_vector_store(chunks)
-    chain  = build_qa_chain(store)
+    store = build_vector_store(chunks, store_path=store_path)
+
+    llm = ChatOpenAI(
+        model=config.OPENAI_MODEL,
+        temperature=0,
+        openai_api_key=config.OPENAI_API_KEY,
+    ).with_structured_output(_RuleCheck)
+
+    retriever = store.as_retriever(
+        search_type="mmr",
+        search_kwargs={
+            "k": config.RETRIEVAL_TOP_K,
+            "fetch_k": config.RETRIEVAL_TOP_K * 4,
+            "lambda_mult": 0.7,
+        },
+    )
 
     results = []
     for check in COMPLIANCE_CHECKS:
-        response = ask(chain, check["question"])
-        status   = _parse_status(response["answer"])
-        results.append(ComplianceResult(
-            rule_name=check["rule_name"],
-            status=status,
-            detail=response["answer"][:200],   # truncate for display
-            sources=response["sources"],
+        docs = retriever.invoke(check["question"])
+        context = "\n\n".join(d.page_content for d in docs)
+        sources = list(dict.fromkeys(
+            f"page {d.metadata.get('page', '?')} of {d.metadata.get('source', 'unknown')}"
+            for d in docs
         ))
 
-    return ComplianceReport(
-        document_name=document_path,
-        results=results,
-    )
+        result = llm.invoke([
+            SystemMessage(content=_SYSTEM),
+            HumanMessage(content=f"Document Context:\n{context}\n\nCompliance Check: {check['question']}"),
+        ])
+
+        results.append(ComplianceResult(
+            rule_name=check["rule_name"],
+            status=result.status,
+            detail=result.reasoning,
+            sources=sources,
+        ))
+
+    report = ComplianceReport(document_name=document_path, results=results)
+
+    if report_save_path:
+        with open(report_save_path, "w", encoding="utf-8") as f:
+            json.dump(report.to_dict(), f, indent=2)
+
+    return report

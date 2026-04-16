@@ -1,0 +1,163 @@
+UNIFORM RESIDENTIAL LOAN APPLICATION (1003) — FHA LOAN SAMPLE
+==============================================================
+Loan Number: LOAN-2024-0103
+Application Date: April 10, 2024
+
+SECTION I — LOAN INFORMATION
+------------------------------
+Loan Purpose: Purchase
+Property Type: Single-family residence
+Occupancy: Primary residence
+Loan Amount Requested: $248,500
+Purchase Price: $255,000
+Down Payment: $8,925 (3.5% — Source: gift from parents)
+Interest Rate: 7.375% (30-year fixed, FHA)
+Upfront MIP: $4,348.75 (1.75% financed into loan)
+Annual MIP: 0.85%
+
+SECTION II — BORROWER INFORMATION
+------------------------------------
+Borrower Name: Carlos A. Mendez
+Date of Birth: November 22, 1993
+SSN (last 4): 6634
+Current Address: 88 Oak Hill Apartments, Unit 4B, Phoenix, AZ 85003
+Phone: (602) 555-0219
+Email: carlos.mendez92@gmail.com
+Years at current address: 2
+
+SECTION III — EMPLOYMENT INFORMATION
+--------------------------------------
+Current Employer: Desert Sun HVAC Services
+Position: HVAC Technician (Lead)
+Start Date: June 2021 (2 years 10 months)
+Employment Type: W-2 Employee
+Employer Address: 5500 N. 7th Street, Phoenix, AZ 85014
+Employer Phone: (602) 555-0401
+
+Previous Employer: Quick Fix Home Services
+Position: Apprentice Technician
+Dates: March 2020 – May 2021 (14 months)
+
+Gap in employment: January 2020 – February 2020 (2 months — COVID-19 layoff, letter of explanation provided)
+
+SECTION IV — INCOME
+--------------------
+Base Salary (monthly gross): $5,400
+Overtime (2-year average): $480/month (consistent, documented)
+Total Monthly Income: $5,880
+
+Supporting documents noted:
+  - W-2 2022: $64,100 gross
+  - W-2 2023: $69,400 gross (includes overtime)
+  - Pay stubs (March 2024): $2,500 bi-weekly
+  - Tax returns 2022 and 2023: Filed single
+  - Letter of explanation for 2-month employment gap (COVID-19)
+
+SECTION V — ASSETS
+--------------------
+Checking Account — Chase Bank (ending 2281): $5,200
+Savings Account — Chase Bank (ending 8847): $4,100
+Gift Funds — from parents (gift letter on file): $8,925
+Total Verified Assets: $18,225
+
+Down payment source: Gift funds + savings (gift letter signed, no repayment required)
+Closing cost estimate: $6,800 (seller concession of $3,400; borrower responsible for $3,400)
+
+SECTION VI — LIABILITIES
+--------------------------
+Auto loan — Credit Union of AZ: $415/month, balance $18,700 (48 months remaining)
+Credit card — Capital One: $780 balance, $2,500 limit (minimum $25/month)
+Credit card — Secured Card: $200 balance, $500 limit (minimum $20/month)
+Medical collections: $1,200 (unpaid — flagged for review)
+
+Total monthly debt payments: $460/month
+
+NOTE: Medical collection of $1,200 — FHA allows collections under $2,000
+to be excluded from DTI calculation if borrower provides payment plan or
+evidence of dispute. Borrower has submitted dispute letter to Equifax.
+
+SECTION VII — REAL ESTATE OWNED
+---------------------------------
+None (first-time homebuyer)
+
+SECTION VIII — DECLARATIONS
+-----------------------------
+Outstanding judgments: No
+Bankruptcy in last 7 years: No (Chapter 7 discharged in 2018 — OUTSIDE 7-year lookback)
+
+WARNING: Bankruptcy was discharged June 2018. FHA requires 2 years from
+discharge date. This application is April 2024 — 5 years 10 months since
+discharge. FHA ELIGIBILITY CONFIRMED.
+
+Property foreclosure in last 7 years: No
+Co-signer on other obligations: No
+U.S. Citizen: Yes (DACA recipient — see FHA eligibility note below)
+
+FHA ELIGIBILITY NOTE — DACA:
+Per FHA handbook updates (2021), DACA recipients with valid Employment
+Authorization are eligible for FHA-insured loans. Borrower has provided:
+  - Valid EAD card (expires March 2026)
+  - Valid SSN
+  - Evidence of lawful residency classification
+
+SECTION IX — CREDIT
+---------------------
+Equifax: 594
+Experian: 601
+TransUnion: 598
+Middle score used: 598
+
+NOTE: Middle score 598 — BELOW standard FHA threshold of 620 for most lenders,
+but ABOVE the HUD minimum of 580 for 3.5% down payment. Lender overlay
+requires minimum 600. Score is 598 — BORDERLINE. Manual underwriting required.
+
+SECTION X — PROPERTY INFORMATION
+----------------------------------
+Property Address: 4401 W. Camelback Road, Phoenix, AZ 85019
+Appraised Value: $257,000 (appraisal ordered April 15, 2024)
+FHA Case Number: AZ-2024-04183
+Property Tax (annual): $1,680
+Homeowner's Insurance (annual): $1,440
+HOA: None
+
+FHA PROPERTY REQUIREMENTS:
+  - No health/safety hazards observed per appraisal
+  - Roof condition: Good (estimated 10+ years remaining life)
+  - No peeling lead paint observed
+  - Utilities functional
+  - Minor repairs noted: screen door missing (cosmetic only — FHA appraiser signed off)
+
+SECTION XI — CALCULATIONS
+--------------------------
+Base Loan Amount: $248,500
+Financed Upfront MIP (1.75%): $4,348.75
+Total Loan Amount: $252,848.75
+
+LTV: $248,500 / $255,000 = 97.5% → Standard FHA LTV (3.5% down)
+Annual MIP (0.85%): $178/month
+
+Front-end DTI: ($2,380 PITI) / $5,880 = 40.5%
+  P&I at 7.375% on $252,848: $1,746
+  Taxes: $140/month
+  Insurance: $120/month
+  Annual MIP: $178/month
+  PITI total: $2,184
+
+Back-end DTI: ($2,184 PITI + $460 other debts) / $5,880 = 44.3%
+
+NOTE: Back-end DTI of 44.3% exceeds FHA standard 43% threshold.
+Compensating factors documented:
+  1. Minimal payment shock (current rent: $1,100; new PITI: $2,184 — significant increase, flag)
+  2. Growing income trend ($64K to $69K year-over-year)
+  3. Stable employment for nearly 3 years
+
+UNDERWRITER NOTES:
+  - BORDERLINE file — requires manual underwriting and senior UW sign-off
+  - Credit score 598 — below lender overlay of 600 (escalate to management)
+  - DTI 44.3% — above FHA preferred 43%, requires 2 compensating factors
+  - Payment shock significant (rent $1,100 → PITI $2,184) — weakness
+  - Income trend positive — strength
+  - Gift funds properly documented — no issues
+  - Medical collection under $2,000 — FHA allowable
+  - DACA status confirmed eligible per current FHA guidelines
+  - RECOMMENDATION: Suspend — Additional compensating factors needed or credit score improvement required before approval

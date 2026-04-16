@@ -11,3 +11,14 @@ wheels/
 
 # Environment secrets
 .env
+
+# Test/build cache
+.pytest_cache
+
+# Runtime-generated data — keep directory structure via .gitkeep
+data/uploaded_data/*
+!data/uploaded_data/.gitkeep
+data/vector_store/*
+!data/vector_store/.gitkeep
+
+memory/

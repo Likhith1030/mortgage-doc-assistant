@@ -1,23 +1,3 @@
-"""
-agents/communication_agent.py — Draft internal memos and team communications.
-
-WORKFLOW:
-  Loan officer selects a situation (e.g., "missing documents", "approval ready")
-  → system generates a professional internal email or Slack-style message
-  → officer reviews, edits, and sends.
-
-PURPOSE:
-  Standardizes internal communication language, reduces drafting time from
-  ~15 minutes to ~2 minutes, and ensures regulatory-safe phrasing.
-
-SITUATIONS HANDLED:
-  - Document deficiency notice (internal)
-  - Escalation to underwriting
-  - Approval recommendation memo
-  - Appraisal order request
-  - Rate lock advisory
-"""
-
 from dataclasses import dataclass
 from typing import Optional
 
@@ -48,7 +28,7 @@ SSNs, full account numbers, or discriminatory language. Always include:
 Recipient role: {recipient_role}
 Situation: {situation}
 Borrower reference: {borrower_ref}
-Additional details: {details}
+Details: {details}
 
 Format:
 SUBJECT: [subject line]
@@ -90,26 +70,18 @@ def draft_internal_message(
     recipient_role: str,
     borrower_ref: str,
     details: str = "",
+    document_context: str = "",
 ) -> InternalMessage:
     """
     Draft an internal communication for a given mortgage situation.
 
     Args:
-        situation_code:  One of the keys in SITUATIONS dict above.
-        recipient_role:  e.g. "Underwriting Team", "Branch Manager", "Processor"
-        borrower_ref:    File or loan number (NOT SSN or full name for privacy)
-        details:         Any extra context the drafter wants included.
-
-    Returns:
-        InternalMessage with subject and body separated.
-
-    Example:
-        msg = draft_internal_message(
-            situation_code="missing_docs",
-            recipient_role="Loan Processor",
-            borrower_ref="LOAN-2024-0042",
-            details="Missing: 2023 W-2, 2 months bank statements. Deadline: June 15."
-        )
+        situation_code:    One of the keys in SITUATIONS.
+        recipient_role:    e.g. "Underwriting Team", "Branch Manager".
+        borrower_ref:      File or loan number (NOT SSN or full name).
+        details:           Extra context the drafter wants included.
+        document_context:  Retrieved chunks from the uploaded mortgage document.
+                           When provided, the memo is grounded in actual file data.
     """
     if situation_code not in SITUATIONS:
         raise ValueError(
@@ -117,26 +89,25 @@ def draft_internal_message(
             f"Valid codes: {list(SITUATIONS.keys())}"
         )
 
+    enriched_details = _build_details(details, document_context)
+
     situation_info = SITUATIONS[situation_code]
     llm = ChatOpenAI(
         model=config.OPENAI_MODEL,
-        temperature=0.3,           # slight creativity for natural-sounding prose
+        temperature=0.3,
         openai_api_key=config.OPENAI_API_KEY,
     )
 
-    chain    = INTERNAL_MEMO_PROMPT | llm
+    chain = INTERNAL_MEMO_PROMPT | llm
     response = chain.invoke({
-        "message_type":  situation_info["message_type"],
+        "message_type":   situation_info["message_type"],
         "recipient_role": recipient_role,
-        "situation":     situation_info["description"],
-        "borrower_ref":  borrower_ref,
-        "details":       details or "No additional details provided.",
+        "situation":      situation_info["description"],
+        "borrower_ref":   borrower_ref,
+        "details":        enriched_details,
     })
 
-    raw = response.content.strip()
-
-    # Parse the SUBJECT: line from the body.
-    subject, body = _parse_subject_body(raw)
+    subject, body = _parse_subject_body(response.content.strip())
 
     return InternalMessage(
         subject=subject,
@@ -146,8 +117,14 @@ def draft_internal_message(
     )
 
 
+def _build_details(details: str, document_context: str) -> str:
+    base = details.strip() if details.strip() else "No additional details provided."
+    if document_context:
+        return f"{base}\n\nRelevant document context:\n{document_context}"
+    return base
+
+
 def _parse_subject_body(raw: str) -> tuple[str, str]:
-    """Split 'SUBJECT: ...\n\n[body]' into (subject, body)."""
     lines = raw.split("\n")
     subject = ""
     body_lines = []
@@ -168,7 +145,6 @@ def _parse_subject_body(raw: str) -> tuple[str, str]:
 
 
 def list_situations() -> None:
-    """Print available situation codes for reference."""
     print("Available situation codes:")
     for code, info in SITUATIONS.items():
         print(f"  {code:<30} — {info['description']}")

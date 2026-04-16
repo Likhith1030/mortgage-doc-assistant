@@ -14,20 +14,23 @@ load_dotenv()  # reads .env file into os.environ
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL   = os.getenv("OPENAI_MODEL", "gpt-4o")
 
-# Embedding model used when converting text chunks to vectors.
-# text-embedding-3-small is cheap; swap for text-embedding-3-large for accuracy.
 EMBEDDING_MODEL = "text-embedding-3-small"
+
+# ── Unstructured API (PDF parsing) ────────────────────────────────────────────
+UNSTRUCTURED_API_KEY = os.getenv("UNSTRUCTURED_API_KEY", "")
+UNSTRUCTURED_API_URL = os.getenv("UNSTRUCTURED_API_URL", "https://api.unstructuredapp.io")
 
 # ── Vector store ──────────────────────────────────────────────────────────────
 VECTOR_STORE_PATH = os.getenv("VECTOR_STORE_PATH", "./data/vector_store")
 
-# Number of similar chunks to retrieve when answering a question.
-RETRIEVAL_TOP_K = 5
+RETRIEVAL_TOP_K = 12  # chunks passed to the LLM as context
 
 # ── Document chunking ────────────────────────────────────────────────────────
-# How many characters per chunk. Larger = more context, slower + costlier.
-CHUNK_SIZE    = 1000
-CHUNK_OVERLAP = 150  # overlap keeps context from being cut at chunk boundaries
+CHUNK_SIZE    = 1500  # ~375 tokens per chunk; larger = more context per result
+CHUNK_OVERLAP = 200   # overlap prevents losing context at chunk boundaries
+
+# ── Uploaded documents & history ─────────────────────────────────────────────
+UPLOADED_DATA_PATH = os.getenv("UPLOADED_DATA_PATH", "./data/uploaded_data")
 
 # ── Compliance rules file ────────────────────────────────────────────────────
 COMPLIANCE_RULES_PATH = "./data/knowledge_base/compliance_rules.txt"

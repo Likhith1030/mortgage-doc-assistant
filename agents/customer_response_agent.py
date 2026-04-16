@@ -1,22 +1,3 @@
-"""
-agents/customer_response_agent.py — Draft borrower-facing emails.
-
-WORKFLOW:
-  Loan officer describes the situation → system drafts a compliant, empathetic
-  borrower email → officer reviews, personalizes, and sends via their email client.
-
-COMPLIANCE NOTES (built into the prompt):
-  - Never reveal specific credit score thresholds to avoid gaming
-  - Never promise approval or guarantee rates
-  - Never use language that could be construed as discriminatory
-  - Include RESPA / TILA disclosures reminder placeholders where applicable
-
-TONE OPTIONS:
-  - "standard"  — Professional, neutral, bank-branded
-  - "empathetic" — Warmer, used for difficult news (denial, delays)
-  - "urgent"    — Used for rate lock deadlines, missing documents
-"""
-
 from dataclasses import dataclass
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
@@ -48,7 +29,7 @@ Tone: {tone}"""),
 Situation: {situation}
 Borrower first name: {borrower_first_name}
 Loan officer name: {officer_name}
-Specific details: {details}
+Details: {details}
 
 Format:
 SUBJECT: [subject line]
@@ -72,33 +53,24 @@ def draft_customer_email(
     officer_name: str,
     tone: str = "standard",
     details: str = "",
+    document_context: str = "",
 ) -> CustomerEmail:
     """
     Draft a borrower-facing email.
 
     Args:
-        situation:           What this email is about. E.g., "Application received",
-                             "Missing income documents needed", "Conditional approval".
-        borrower_first_name: Used in salutation. Do not pass full name for privacy.
+        situation:           What this email is about.
+        borrower_first_name: Used in salutation.
         officer_name:        Loan officer's name for the sign-off.
         tone:                "standard", "empathetic", or "urgent".
-        details:             Specifics to include (e.g., which docs are needed, deadlines).
-
-    Returns:
-        CustomerEmail with all parts separated for easy editing.
-
-    Example:
-        email = draft_customer_email(
-            situation="Conditional approval — income documents needed",
-            borrower_first_name="Sarah",
-            officer_name="James Patel",
-            tone="standard",
-            details="We need 2023 W-2 and last 2 pay stubs by June 20th."
-        )
-        print(email.full_email)
+        details:             Specifics to include (docs needed, deadlines, etc.).
+        document_context:    Retrieved chunks from the uploaded mortgage document.
+                             When provided, the email is grounded in actual file data.
     """
     if tone not in TONE_DESCRIPTIONS:
         raise ValueError(f"tone must be one of: {list(TONE_DESCRIPTIONS.keys())}")
+
+    enriched_details = _build_details(details, document_context)
 
     llm = ChatOpenAI(
         model=config.OPENAI_MODEL,
@@ -106,23 +78,29 @@ def draft_customer_email(
         openai_api_key=config.OPENAI_API_KEY,
     )
 
-    chain    = CUSTOMER_EMAIL_PROMPT | llm
+    chain = CUSTOMER_EMAIL_PROMPT | llm
     response = chain.invoke({
         "tone":                tone,
         "situation":           situation,
         "borrower_first_name": borrower_first_name,
         "officer_name":        officer_name,
-        "details":             details or "No additional details.",
+        "details":             enriched_details,
     })
 
     return _parse_email(response.content.strip())
 
 
+def _build_details(details: str, document_context: str) -> str:
+    base = details.strip() if details.strip() else "No additional details provided."
+    if document_context:
+        return f"{base}\n\nRelevant document context:\n{document_context}"
+    return base
+
+
 def _parse_email(raw: str) -> CustomerEmail:
-    """Parse the structured output into a CustomerEmail object."""
     sections = {"SUBJECT": "", "SALUTATION": "", "BODY": "", "CLOSING": ""}
-    current  = None
-    buffer   = []
+    current = None
+    buffer = []
 
     for line in raw.split("\n"):
         for key in sections:

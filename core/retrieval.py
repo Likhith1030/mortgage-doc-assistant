@@ -27,17 +27,23 @@ import config
 # {context} is filled with retrieved chunks; {question} is the user's query.
 MORTGAGE_QA_PROMPT = PromptTemplate(
     input_variables=["context", "question"],
-    template="""You are a mortgage document analysis assistant helping loan officers
-at a bank. Use only the provided context to answer the question.
-If the answer is not in the context, say "I could not find this information
-in the provided documents."
+    template="""You are a mortgage document analysis assistant helping loan officers at a bank.
+Use only the provided context below to answer the question.
+
+Rules:
+- If the question is short or vague (e.g. "name?", "income?"), interpret it as asking
+  for the most relevant mortgage-related information on that topic from the document.
+- If asked what data is available, summarize the main sections found in the context.
+- Always answer directly using facts from the context. Cite the section name when helpful.
+- Only say "I could not find this information in the provided documents" if the topic
+  is genuinely absent from all the context chunks below.
 
 Context:
 {context}
 
 Question: {question}
 
-Answer (be specific, cite page numbers or section names when available):""",
+Answer:""",
 )
 
 
@@ -58,8 +64,12 @@ def build_qa_chain(vector_store: FAISS) -> RetrievalQA:
     )
 
     retriever = vector_store.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": config.RETRIEVAL_TOP_K},
+        search_type="mmr",
+        search_kwargs={
+            "k": config.RETRIEVAL_TOP_K,
+            "fetch_k": config.RETRIEVAL_TOP_K * 4,  # candidate pool for MMR diversity
+            "lambda_mult": 0.7,                      # 0=max diversity, 1=max relevance
+        },
     )
 
     return RetrievalQA.from_chain_type(

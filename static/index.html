@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mortgage Document Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:       #0f2851;
+      --navy-hover: #1a3a6e;
+      --blue:       #2563eb;
+      --blue-light: #eff6ff;
+      --blue-mid:   #bfdbfe;
+      --bg:         #f1f5f9;
+      --surface:    #ffffff;
+      --border:     #e2e8f0;
+      --border-2:   #cbd5e1;
+      --text-1:     #0f172a;
+      --text-2:     #475569;
+      --text-3:     #94a3b8;
+      --green:      #16a34a;
+      --green-bg:   #f0fdf4;
+      --green-bd:   #bbf7d0;
+      --red:        #dc2626;
+      --red-bg:     #fef2f2;
+      --red-bd:     #fecaca;
+      --amber:      #b45309;
+      --amber-bg:   #fffbeb;
+      --amber-bd:   #fde68a;
+      --purple:     #7c3aed;
+      --purple-bg:  #f5f3ff;
+      --purple-bd:  #ddd6fe;
+      --radius:     10px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+      --shadow:     0 4px 6px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
+      --transition: 0.15s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      height: 60px;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      box-shadow: 0 1px 0 rgba(255,255,255,.08);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .brand-icon svg { width: 18px; height: 18px; fill: #fff; }
+    .brand-text { color: white; }
+    .brand-text strong { display: block; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
+    .brand-text span { font-size: 0.72rem; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+    .topbar-badge { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.7); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; }
+
+    /* ── Layout ── */
+    .layout { display: flex; padding-top: 60px; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); position: fixed; top: 60px; bottom: 0; left: 0; overflow-y: auto; display: flex; flex-direction: column; }
+    .sidebar-section { padding: 20px 12px 8px; }
+    .sidebar-label { font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); padding: 0 8px; margin-bottom: 4px; }
+    .nav-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border: none; background: none; cursor: pointer; font-size: 0.875rem; color: var(--text-2); border-radius: 7px; text-align: left; font-family: inherit; font-weight: 500; transition: all var(--transition); margin-bottom: 1px; }
+    .nav-btn:hover { background: var(--bg); color: var(--text-1); }
+    .nav-btn.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+    .nav-btn .nav-icon { width: 32px; height: 32px; border-radius: 7px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition); }
+    .nav-btn.active .nav-icon { background: var(--blue-mid); }
+    .nav-btn .nav-icon svg { width: 15px; height: 15px; }
+    .nav-btn:hover .nav-icon { background: var(--border); }
+    .nav-btn.active:hover .nav-icon { background: var(--blue-mid); }
+    .sidebar-footer { margin-top: auto; padding: 16px 12px; border-top: 1px solid var(--border); }
+    .sidebar-footer p { font-size: 0.72rem; color: var(--text-3); text-align: center; }
+
+    /* ── Main ── */
+    main { margin-left: 240px; flex: 1; padding: 32px; max-width: calc(100% - 240px); }
+    .tab { display: none; }
+    .tab.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    /* ── Page header ── */
+    .page-header { margin-bottom: 24px; }
+    .page-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; margin-bottom: 4px; }
+    .page-header p { font-size: 0.875rem; color: var(--text-2); }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); padding: 24px; margin-bottom: 16px; }
+    .card-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 16px; }
+
+    /* ── Form fields ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field label { font-size: 0.8rem; font-weight: 600; color: var(--text-2); }
+    input[type="text"], select, textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border-2); border-radius: 7px; font-size: 0.875rem; color: var(--text-1); background: var(--surface); outline: none; font-family: inherit; transition: border-color var(--transition), box-shadow var(--transition); }
+    input[type="text"]:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    textarea { resize: vertical; min-height: 80px; }
+    select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+    /* ── File drop zone ── */
+    .file-zone { border: 2px dashed var(--border-2); border-radius: var(--radius); padding: 32px 20px; text-align: center; cursor: pointer; transition: all var(--transition); background: var(--bg); position: relative; }
+    .file-zone:hover, .file-zone.drag { border-color: var(--blue); background: var(--blue-light); }
+    .file-zone input { display: none; }
+    .file-zone-icon { width: 48px; height: 48px; margin: 0 auto 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
+    .file-zone-icon svg { width: 22px; height: 22px; color: var(--text-3); }
+    .file-zone h4 { font-size: 0.9rem; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+    .file-zone p { font-size: 0.8rem; color: var(--text-3); }
+    .file-zone .chosen { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; background: var(--blue-light); border: 1px solid var(--blue-mid); color: var(--blue); font-size: 0.8rem; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; background: var(--navy); color: white; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background var(--transition), transform var(--transition), box-shadow var(--transition); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+    .btn:hover { background: var(--navy-hover); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { background: var(--text-3); cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn-ghost { background: none; color: var(--text-2); border: 1px solid var(--border-2); box-shadow: none; }
+    .btn-ghost:hover { background: var(--bg); color: var(--text-1); box-shadow: none; }
+    .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
+    .btn-green { background: var(--green); }
+    .btn-green:hover { background: #15803d; }
+
+    /* ── Spinner ── */
+    .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .65s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result panel ── */
+    .result-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .result-panel.show { display: block; animation: fadeIn .2s ease; }
+    .result-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .result-panel-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+    .result-panel-title svg { width: 14px; height: 14px; color: var(--green); }
+    .result-panel-actions { display: flex; gap: 6px; align-items: center; }
+    .copy-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-2); background: var(--surface); border: 1px solid var(--border-2); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: inherit; transition: all var(--transition); }
+    .copy-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .result-body { padding: 20px; font-size: 0.875rem; line-height: 1.75; white-space: pre-wrap; word-break: break-word; color: var(--text-1); max-height: 520px; overflow-y: auto; }
+    .result-body.mono { font-family: 'Courier New', monospace; font-size: 0.82rem; }
+
+    /* ── Brief rendered view ── */
+    .brief-view { white-space: normal; max-height: 560px; overflow-y: auto; }
+    .brief-view .brief-h3 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--navy); margin: 20px 0 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+    .brief-view .brief-h3:first-child { margin-top: 0; }
+    .brief-view .brief-h4 { font-size: 0.82rem; font-weight: 600; color: var(--text-1); margin: 12px 0 6px; }
+    .brief-view .brief-p { margin-bottom: 8px; color: var(--text-1); }
+    .brief-view .brief-list { margin: 4px 0 10px 18px; }
+    .brief-view .brief-list li { margin-bottom: 4px; }
+    .brief-view .citation { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--blue); background: var(--blue-light); border: 1px solid var(--blue-mid); border-radius: 4px; padding: 0 4px; margin-left: 2px; vertical-align: middle; line-height: 1.6; }
+
+    /* ── Brief edit textarea ── */
+    .brief-edit-area { display: none; width: 100%; min-height: 400px; max-height: 560px; padding: 20px; border: none; border-top: 1px solid var(--border); font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.7; color: var(--text-1); resize: vertical; outline: none; background: #fafbfc; }
+    .brief-edit-area:focus { background: white; }
+    .brief-confirm-bar { display: none; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--amber-bg); border-top: 1px solid var(--amber-bd); }
+    .brief-confirm-bar span { font-size: 0.82rem; color: var(--amber); font-weight: 500; }
+    .brief-confirm-bar .confirm-actions { display: flex; gap: 8px; }
+
+    /* ── Compliance ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+    .stat-card.pass { background: var(--green-bg); border: 1px solid var(--green-bd); }
+    .stat-card.fail { background: var(--red-bg);   border: 1px solid var(--red-bd); }
+    .stat-card.review { background: var(--amber-bg); border: 1px solid var(--amber-bd); }
+    .stat-card .stat-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+    .stat-card .stat-label { font-size: 0.75rem; font-weight: 600; }
+    .stat-card.pass .stat-num, .stat-card.pass .stat-label { color: var(--green); }
+    .stat-card.fail .stat-num, .stat-card.fail .stat-label { color: var(--red); }
+    .stat-card.review .stat-num, .stat-card.review .stat-label { color: var(--amber); }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--bg); }
+    th { padding: 10px 14px; text-align: left; font-size: 0.72rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 12px 14px; border-top: 1px solid var(--border); font-size: 0.85rem; vertical-align: top; }
+    tr:hover td { background: var(--bg); }
+    .rule-name { font-weight: 600; color: var(--text-1); }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+    .status-pill.pass   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .status-pill.fail   { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bd); }
+    .status-pill.review { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+
+    /* ── Q&A Chat ── */
+    .qa-doc-banner { display: flex; align-items: center; gap: 12px; background: var(--blue-light); border: 1px solid var(--blue-mid); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; }
+    .qa-doc-banner svg { width: 18px; height: 18px; color: var(--blue); flex-shrink: 0; }
+    .qa-doc-banner strong { font-size: 0.875rem; font-weight: 600; color: var(--navy); }
+    .qa-doc-banner span { font-size: 0.8rem; color: var(--text-2); }
+    .qa-doc-banner .banner-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .qa-doc-banner .change-btn { font-size: 0.78rem; font-weight: 600; color: var(--blue); background: none; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .chat-window { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .chat-body { min-height: 320px; max-height: 420px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-3); font-size: 0.85rem; padding: 40px 0; }
+    .chat-empty svg { width: 32px; height: 32px; opacity: .4; }
+    .bubble-row { display: flex; gap: 8px; }
+    .bubble-row.user { flex-direction: row-reverse; }
+    .bubble-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+    .bubble-row.user .bubble-avatar { background: var(--navy); color: white; }
+    .bubble-row.assistant .bubble-avatar { background: var(--blue-light); border: 1px solid var(--blue-mid); color: var(--blue); }
+    .bubble { max-width: 78%; padding: 11px 15px; border-radius: 14px; font-size: 0.875rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+    .bubble-row.user .bubble { background: var(--navy); color: white; border-bottom-right-radius: 4px; }
+    .bubble-row.assistant .bubble { background: var(--bg); color: var(--text-1); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .bubble-row.assistant.typing .bubble { color: var(--text-3); font-style: italic; }
+    .chat-input-bar { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg); }
+    .chat-input-bar input { flex: 1; padding: 9px 14px; border: 1px solid var(--border-2); border-radius: 8px; font-size: 0.875rem; background: var(--surface); font-family: inherit; outline: none; }
+    .chat-input-bar input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    .chat-send-btn { padding: 9px 18px; background: var(--blue); color: white; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: background var(--transition); }
+    .chat-send-btn:hover { background: #1d4ed8; }
+    .chat-send-btn:disabled { background: var(--text-3); cursor: not-allowed; }
+    .chat-send-btn svg { width: 14px; height: 14px; }
+
+    /* ── Save chat btn ── */
+    .save-chat-btn { font-size: 0.75rem; font-weight: 600; color: var(--green); background: var(--green-bg); border: 1px solid var(--green-bd); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: inherit; transition: all var(--transition); }
+    .save-chat-btn:hover { background: var(--green); color: white; }
+    .save-chat-btn.saved { color: var(--text-3); background: var(--bg); border-color: var(--border-2); cursor: default; }
+
+    /* ── Grounding badge ── */
+    .ground-badge { display: none; align-items: center; gap: 8px; background: var(--green-bg); border: 1px solid var(--green-bd); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.82rem; color: #166534; }
+    .ground-badge svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .ground-badge strong { font-weight: 600; }
+    .grounded-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 600; color: var(--green); background: var(--green-bg); border: 1px solid var(--green-bd); border-radius: 12px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+
+    /* ── Alert ── */
+    .alert { display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border-radius: 8px; font-size: 0.875rem; margin-top: 16px; }
+    .alert.error { background: var(--red-bg); border: 1px solid var(--red-bd); color: #991b1b; }
+    .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text-1); color: white; padding: 10px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,.2); transform: translateY(12px); opacity: 0; transition: all .25s ease; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; transform: none; }
+
+    /* ── History tab ── */
+    .history-empty { text-align: center; padding: 60px 20px; color: var(--text-3); }
+    .history-empty svg { width: 40px; height: 40px; margin: 0 auto 12px; display: block; opacity: .4; }
+    .history-empty p { font-size: 0.9rem; }
+    .doc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--shadow-sm); transition: border-color var(--transition); }
+    .doc-card:hover { border-color: var(--blue-mid); }
+    .doc-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .doc-icon.pdf { background: #fef2f2; border: 1px solid #fecaca; }
+    .doc-icon.txt { background: var(--blue-light); border: 1px solid var(--blue-mid); }
+    .doc-icon svg { width: 20px; height: 20px; }
+    .doc-icon.pdf svg { color: var(--red); }
+    .doc-icon.txt svg { color: var(--blue); }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name { font-weight: 600; font-size: 0.9rem; color: var(--text-1); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .doc-meta { font-size: 0.78rem; color: var(--text-3); margin-bottom: 8px; }
+    .doc-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; }
+    .chip.summary  { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-bd); }
+    .chip.compliance { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .chip.qa       { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
+    .doc-actions { display: flex; gap: 6px; align-items: flex-start; flex-wrap: wrap; flex-shrink: 0; }
+    .doc-action-btn { font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; border: 1px solid var(--border-2); background: var(--surface); color: var(--text-2); transition: all var(--transition); white-space: nowrap; }
+    .doc-action-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .doc-action-btn.primary { background: var(--blue); color: white; border-color: var(--blue); }
+    .doc-action-btn.primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+    .history-refresh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .history-count { font-size: 0.82rem; color: var(--text-3); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    </div>
+    <div class="brand-text">
+      <strong>MortgageAssist AI</strong>
+      <span>Document Intelligence Platform</span>
+    </div>
+  </div>
+  <div class="topbar-badge">Beta</div>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Document Tools</div>
+
+      <button class="nav-btn active" onclick="switchTab('summarize',this)">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+        </span>
+        Summarize
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('compliance',this)">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        </span>
+        Compliance Check
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('qa',this)">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+        </span>
+        Document Q&A
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('history',this); loadHistory()">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        </span>
+        History
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Communications</div>
+
+      <button class="nav-btn" onclick="switchTab('internal',this)">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+        </span>
+        Internal Memo
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('email',this)">
+        <span class="nav-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.924 2.617a.997.997 0 00-.215-.322l-.004-.004A.997.997 0 0017 2h-4a1 1 0 100 2h1.586l-3.293 3.293a1 1 0 001.414 1.414L16 5.414V7a1 1 0 102 0V3a.997.997 0 00-.076-.383z"/><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+        </span>
+        Customer Email
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <p>GPT-4o · Unstructured PDF · FAISS RAG</p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- ── Summarize ───────────────────────────────────── -->
+    <div id="tab-summarize" class="tab active">
+      <div class="page-header">
+        <h2>Summarize Document</h2>
+        <p>Upload a mortgage application (PDF or TXT) and receive a structured loan officer brief.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Upload Document</div>
+        <div class="file-zone" id="sum-zone" onclick="document.getElementById('sum-file').click()">
+          <div class="file-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <h4>Drop file here or click to browse</h4>
+          <p>Supports PDF and TXT files</p>
+          <div class="chosen" id="sum-file-name" style="display:none"></div>
+          <input type="file" id="sum-file" accept=".txt,.pdf" onchange="showFileName('sum-file','sum-file-name')" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="sum-btn" onclick="runSummarize()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/></svg>
+            Generate Brief
+          </button>
+        </div>
+      </div>
+
+      <div class="result-panel" id="sum-result">
+        <div class="result-panel-header">
+          <div class="result-panel-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Loan Officer Brief
+          </div>
+          <div class="result-panel-actions">
+            <button class="copy-btn" id="sum-edit-btn" onclick="toggleBriefEdit()">Edit</button>
+            <button class="copy-btn" onclick="copySummary()">Copy</button>
+            <button class="copy-btn" onclick="downloadSummary()" title="Download as .txt">Download</button>
+          </div>
+        </div>
+        <div class="result-body brief-view" id="sum-output"></div>
+        <textarea class="brief-edit-area" id="sum-edit-area" spellcheck="true"></textarea>
+        <div class="brief-confirm-bar" id="sum-confirm-bar">
+          <span>Editing — changes are not saved yet</span>
+          <div class="confirm-actions">
+            <button class="btn btn-ghost btn-sm" onclick="cancelBriefEdit()">Cancel</button>
+            <button class="btn btn-sm btn-green" onclick="saveBriefEdits()">Save &amp; View</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Compliance ──────────────────────────────────── -->
+    <div id="tab-compliance" class="tab">
+      <div class="page-header">
+        <h2>Compliance Check</h2>
+        <p>Verify a mortgage document against DTI, LTV, credit score, QM safe harbor, and fair lending rules.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Upload Document</div>
+        <div class="file-zone" id="comp-zone" onclick="document.getElementById('comp-file').click()">
+          <div class="file-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <h4>Drop file here or click to browse</h4>
+          <p>Supports PDF and TXT files</p>
+          <div class="chosen" id="comp-file-name" style="display:none"></div>
+          <input type="file" id="comp-file" accept=".txt,.pdf" onchange="showFileName('comp-file','comp-file-name')" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="comp-btn" onclick="runCompliance()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Run Compliance Check
+          </button>
+        </div>
+      </div>
+
+      <div class="result-panel" id="comp-result">
+        <div class="result-panel-header">
+          <div class="result-panel-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Compliance Report
+          </div>
+          <div class="result-panel-actions">
+            <button class="copy-btn" onclick="downloadComplianceReport()" title="Download JSON report">Download Report</button>
+          </div>
+        </div>
+        <div class="result-body" style="padding:20px;white-space:normal">
+          <div id="comp-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Internal Memo ───────────────────────────────── -->
+    <div id="tab-internal" class="tab">
+      <div class="page-header">
+        <h2>Internal Communication</h2>
+        <p>Draft a professional internal memo, escalation notice, or advisory in seconds.</p>
+      </div>
+
+      <div class="ground-badge" id="int-ground-badge">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+        <span>Grounding in: <strong id="int-ground-name"></strong></span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Memo Details</div>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Situation</label>
+            <select id="int-situation">
+              <option value="missing_docs">Missing Documents — Borrower has not submitted required documents</option>
+              <option value="escalate_underwriting">Escalate to Underwriting — File needs senior review</option>
+              <option value="approval_memo">Approval Recommendation Memo — File ready for approval</option>
+              <option value="appraisal_order">Appraisal Order Request — Ready to order property appraisal</option>
+              <option value="rate_lock_advisory">Rate Lock Advisory — Rate lock window approaching or expired</option>
+              <option value="denial_notice_internal">Internal Denial Notification — Application does not meet criteria</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Recipient Role</label>
+            <input type="text" id="int-recipient" value="Loan Processor" placeholder="e.g. Underwriting Team" />
+          </div>
+          <div class="form-field">
+            <label>Loan / File Reference</label>
+            <input type="text" id="int-ref" value="LOAN-2024-0042" placeholder="e.g. LOAN-2024-0042" />
+          </div>
+          <div class="form-field full">
+            <label>Additional Details</label>
+            <textarea id="int-details" placeholder="Specific items, deadlines, or context to include…">Missing: 2023 W-2 and last 2 bank statements. Deadline: April 10.</textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="int-btn" onclick="runInternalComm()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            Draft Memo
+          </button>
+        </div>
+      </div>
+
+      <div class="result-panel" id="int-result">
+        <div class="result-panel-header">
+          <div class="result-panel-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Draft Memo
+            <span class="grounded-pill" id="int-grounded-pill" style="display:none">
+              <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+              Grounded
+            </span>
+          </div>
+          <div class="result-panel-actions">
+            <button class="copy-btn" onclick="copyResult('int-output')">Copy</button>
+            <button class="copy-btn" onclick="downloadDraft('int-output','internal_memo.txt')">Download</button>
+          </div>
+        </div>
+        <div class="result-body" id="int-output"></div>
+      </div>
+    </div>
+
+    <!-- ── Customer Email ──────────────────────────────── -->
+    <div id="tab-email" class="tab">
+      <div class="page-header">
+        <h2>Customer Email</h2>
+        <p>Generate a compliant, professional borrower-facing email draft.</p>
+      </div>
+
+      <div class="ground-badge" id="em-ground-badge">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+        <span>Grounding in: <strong id="em-ground-name"></strong></span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Email Parameters</div>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Situation</label>
+            <input type="text" id="em-situation" value="Conditional approval — income documents needed" />
+          </div>
+          <div class="form-field">
+            <label>Borrower First Name</label>
+            <input type="text" id="em-name" value="Michael" />
+          </div>
+          <div class="form-field">
+            <label>Loan Officer Name</label>
+            <input type="text" id="em-officer" value="James Patel" />
+          </div>
+          <div class="form-field full">
+            <label>Tone</label>
+            <select id="em-tone">
+              <option value="standard">Standard — Professional &amp; neutral</option>
+              <option value="empathetic">Empathetic — Warm and supportive (difficult news)</option>
+              <option value="urgent">Urgent — Action-oriented with deadline emphasis</option>
+            </select>
+          </div>
+          <div class="form-field full">
+            <label>Details to Include</label>
+            <textarea id="em-details" placeholder="Documents needed, deadlines, next steps…">Please provide your 2023 W-2 and last 2 pay stubs by April 10.</textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="em-btn" onclick="runEmail()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.924 2.617a.997.997 0 00-.215-.322l-.004-.004A.997.997 0 0017 2h-4a1 1 0 100 2h1.586l-3.293 3.293a1 1 0 001.414 1.414L16 5.414V7a1 1 0 102 0V3a.997.997 0 00-.076-.383z"/><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+            Draft Email
+          </button>
+        </div>
+      </div>
+
+      <div class="result-panel" id="em-result">
+        <div class="result-panel-header">
+          <div class="result-panel-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Email Draft
+            <span class="grounded-pill" id="em-grounded-pill" style="display:none">
+              <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+              Grounded
+            </span>
+          </div>
+          <div class="result-panel-actions">
+            <button class="copy-btn" onclick="copyResult('em-output')">Copy</button>
+            <button class="copy-btn" onclick="downloadDraft('em-output','customer_email.txt')">Download</button>
+          </div>
+        </div>
+        <div class="result-body mono" id="em-output"></div>
+      </div>
+    </div>
+
+    <!-- ── Q&A ────────────────────────────────────────── -->
+    <div id="tab-qa" class="tab">
+      <div class="page-header">
+        <h2>Document Q&amp;A</h2>
+        <p>Load a document once and ask unlimited questions. The loaded document also grounds Internal Memo and Customer Email drafts.</p>
+      </div>
+
+      <!-- Upload card -->
+      <div id="qa-upload-card" class="card">
+        <div class="card-title">Load Document</div>
+        <div class="file-zone" id="qa-zone" onclick="document.getElementById('qa-file').click()">
+          <div class="file-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <h4>Drop file here or click to browse</h4>
+          <p>Supports PDF and TXT files</p>
+          <div class="chosen" id="qa-file-name" style="display:none"></div>
+          <input type="file" id="qa-file" accept=".txt,.pdf" onchange="showFileName('qa-file','qa-file-name')" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="qa-upload-btn" onclick="runQaUpload()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+            Load &amp; Index Document
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat area -->
+      <div id="qa-chat-area" style="display:none">
+        <div class="qa-doc-banner">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          <div>
+            <strong id="qa-doc-name">document.txt</strong><br>
+            <span id="qa-doc-meta">Indexed and ready</span>
+          </div>
+          <div class="banner-actions">
+            <button class="save-chat-btn" id="qa-save-btn" onclick="saveChat()" style="display:none">Save Chat</button>
+            <button class="change-btn" onclick="resetQa()">Change document</button>
+          </div>
+        </div>
+
+        <div class="chat-window">
+          <div class="chat-body" id="qa-messages">
+            <div class="chat-empty" id="qa-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              <span>Ask anything about the document</span>
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <input type="text" id="qa-question" placeholder="e.g. What is the borrower's DTI ratio?" onkeydown="if(event.key==='Enter')runQaAsk()" />
+            <button class="chat-send-btn" id="qa-ask-btn" onclick="runQaAsk()">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── History ──────────────────────────────────────── -->
+    <div id="tab-history" class="tab">
+      <div class="page-header">
+        <h2>Document History</h2>
+        <p>All documents processed through the assistant. Load any document into Q&amp;A or view saved reports.</p>
+      </div>
+
+      <div class="history-refresh">
+        <span class="history-count" id="history-count">Loading…</span>
+        <button class="btn btn-ghost btn-sm" onclick="loadHistory()">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <div id="history-list"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let qaSessionId   = null;
+  let qaFileName    = '';
+  let qaDocId       = null;
+  let _briefRaw     = '';
+  let _briefEditing = false;
+  let _compData     = null;  // last compliance result data
+  let _chatMessages = [];    // track messages in current QA session
+
+  // ── Tab switching ──────────────────────────────────────────────────
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── File name display ──────────────────────────────────────────────
+  function showFileName(inputId, labelId) {
+    const file = document.getElementById(inputId).files[0];
+    const el = document.getElementById(labelId);
+    if (file) {
+      el.textContent = '📎 ' + file.name;
+      el.style.display = 'inline-flex';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  // ── Drag & drop ────────────────────────────────────────────────────
+  ['sum', 'comp', 'qa'].forEach(prefix => {
+    const zone = document.getElementById(prefix + '-zone');
+    if (!zone) return;
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag');
+      const input = document.getElementById(prefix + '-file');
+      const dt = new DataTransfer();
+      dt.items.add(e.dataTransfer.files[0]);
+      input.files = dt.files;
+      showFileName(prefix + '-file', prefix + '-file-name');
+    });
+  });
+
+  // ── Button loading state ───────────────────────────────────────────
+  function setLoading(id, on) {
+    const btn = document.getElementById(id);
+    btn.disabled = on;
+    if (on) {
+      btn._orig = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span> Working…';
+    } else {
+      btn.innerHTML = btn._orig || btn.innerHTML;
+    }
+  }
+
+  // ── Toast notification ─────────────────────────────────────────────
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  // ── Error display ──────────────────────────────────────────────────
+  function showErr(panelId, msg) {
+    const panel = document.getElementById(panelId);
+    panel.classList.add('show');
+    const body = panel.querySelector('.result-body, #comp-output');
+    body.innerHTML = `<div class="alert error"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>${escHtml(msg)}</div>`;
+  }
+
+  // ── Copy / Download helpers ────────────────────────────────────────
+  function copyResult(id) {
+    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => toast('Copied to clipboard'));
+  }
+
+  function downloadDraft(id, filename) {
+    const text = document.getElementById(id).innerText;
+    _downloadText(text, filename);
+    toast('Draft downloaded');
+  }
+
+  function downloadSummary() {
+    if (!_briefRaw) return;
+    _downloadText(_briefRaw, 'loan_brief.md');
+    toast('Brief downloaded');
+  }
+
+  function downloadComplianceReport() {
+    if (!_compData) return;
+    _downloadText(JSON.stringify(_compData, null, 2), 'compliance_report.json');
+    toast('Report downloaded');
+  }
+
+  function _downloadText(text, filename) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ── Markdown renderer ──────────────────────────────────────────────
+  function markdownToHtml(md) {
+    const lines = md.split('\n');
+    let html = '';
+    let inList = false;
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('## ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h3 class="brief-h3">${inlineFormat(line.slice(3))}</h3>`;
+      } else if (line.startsWith('### ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h4 class="brief-h4">${inlineFormat(line.slice(4))}</h4>`;
+      } else if (/^[-*] /.test(line)) {
+        if (!inList) { html += '<ul class="brief-list">'; inList = true; }
+        html += `<li>${inlineFormat(line.slice(2))}</li>`;
+      } else if (line.trim() === '') {
+        if (inList) { html += '</ul>'; inList = false; }
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<p class="brief-p">${inlineFormat(line)}</p>`;
+      }
+    }
+    if (inList) html += '</ul>';
+    return html;
+  }
+
+  function inlineFormat(text) {
+    let s = escHtml(text);
+    s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    s = s.replace(/\[p\.([^\]]+)\]/g, '<span class="citation">[p.$1]</span>');
+    return s;
+  }
+
+  // ── Summarize ──────────────────────────────────────────────────────
+  async function runSummarize() {
+    const file = document.getElementById('sum-file').files[0];
+    if (!file) { toast('Please select a file first'); return; }
+    setLoading('sum-btn', true);
+    document.getElementById('sum-result').classList.remove('show');
+    _briefEditing = false;
+    document.getElementById('sum-edit-area').style.display = 'none';
+    document.getElementById('sum-confirm-bar').style.display = 'none';
+    document.getElementById('sum-edit-btn').textContent = 'Edit';
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res  = await fetch('/api/summarize', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+      _briefRaw = data.summary;
+      document.getElementById('sum-output').innerHTML = markdownToHtml(_briefRaw);
+      document.getElementById('sum-output').style.display = 'block';
+      document.getElementById('sum-result').classList.add('show');
+      toast('Summary saved to history');
+    } catch(e) { showErr('sum-result', e.message); }
+    finally { setLoading('sum-btn', false); }
+  }
+
+  function toggleBriefEdit() {
+    if (!_briefRaw) return;
+    if (!_briefEditing) {
+      document.getElementById('sum-edit-area').value = _briefRaw;
+      document.getElementById('sum-output').style.display = 'none';
+      document.getElementById('sum-edit-area').style.display = 'block';
+      document.getElementById('sum-confirm-bar').style.display = 'flex';
+      document.getElementById('sum-edit-btn').textContent = 'Cancel';
+      _briefEditing = true;
+      document.getElementById('sum-edit-area').focus();
+    } else {
+      cancelBriefEdit();
+    }
+  }
+
+  function cancelBriefEdit() {
+    document.getElementById('sum-output').style.display = 'block';
+    document.getElementById('sum-edit-area').style.display = 'none';
+    document.getElementById('sum-confirm-bar').style.display = 'none';
+    document.getElementById('sum-edit-btn').textContent = 'Edit';
+    _briefEditing = false;
+  }
+
+  function saveBriefEdits() {
+    _briefRaw = document.getElementById('sum-edit-area').value;
+    document.getElementById('sum-output').innerHTML = markdownToHtml(_briefRaw);
+    cancelBriefEdit();
+    toast('Brief saved');
+  }
+
+  function copySummary() {
+    if (!_briefRaw) return;
+    navigator.clipboard.writeText(_briefRaw).then(() => toast('Copied to clipboard'));
+  }
+
+  // ── Compliance ─────────────────────────────────────────────────────
+  async function runCompliance() {
+    const file = document.getElementById('comp-file').files[0];
+    if (!file) { toast('Please select a file first'); return; }
+    setLoading('comp-btn', true);
+    document.getElementById('comp-result').classList.remove('show');
+    _compData = null;
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res  = await fetch('/api/compliance', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+
+      _compData = data;
+      _renderComplianceResults(data.results, data.totals);
+      document.getElementById('comp-result').classList.add('show');
+      toast('Compliance report saved to history');
+    } catch(e) { showErr('comp-result', e.message); }
+    finally { setLoading('comp-btn', false); }
+  }
+
+  function _renderComplianceResults(results, totals) {
+    const pillMap = {
+      'PASS':         '<span class="status-pill pass">✓ Pass</span>',
+      'FAIL':         '<span class="status-pill fail">✗ Fail</span>',
+      'NEEDS REVIEW': '<span class="status-pill review">⚠ Review</span>',
+    };
+    let html = `
+      <div class="stats-row">
+        <div class="stat-card pass"><div class="stat-num">${totals.pass}</div><div class="stat-label">Passed</div></div>
+        <div class="stat-card fail"><div class="stat-num">${totals.fail}</div><div class="stat-label">Failed</div></div>
+        <div class="stat-card review"><div class="stat-num">${totals.review}</div><div class="stat-label">Needs Review</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Rule</th><th>Status</th><th>Finding</th></tr></thead>
+        <tbody>`;
+    results.forEach(r => {
+      html += `<tr>
+        <td class="rule-name">${escHtml(r.rule)}</td>
+        <td>${pillMap[r.status] || r.status}</td>
+        <td style="color:var(--text-2)">${escHtml(r.detail)}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('comp-output').innerHTML = html;
+  }
+
+  // ── Internal Comm ──────────────────────────────────────────────────
+  async function runInternalComm() {
+    setLoading('int-btn', true);
+    document.getElementById('int-result').classList.remove('show');
+    try {
+      const fd = new FormData();
+      fd.append('situation_code', document.getElementById('int-situation').value);
+      fd.append('recipient',      document.getElementById('int-recipient').value);
+      fd.append('borrower_ref',   document.getElementById('int-ref').value);
+      fd.append('details',        document.getElementById('int-details').value);
+      if (qaSessionId) fd.append('session_id', qaSessionId);
+
+      const res  = await fetch('/api/internal-comm', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+
+      document.getElementById('int-output').textContent = `Subject: ${data.subject}\n\n${data.body}`;
+      document.getElementById('int-grounded-pill').style.display = data.grounded ? 'inline-flex' : 'none';
+      document.getElementById('int-result').classList.add('show');
+    } catch(e) { showErr('int-result', e.message); }
+    finally { setLoading('int-btn', false); }
+  }
+
+  // ── Customer Email ─────────────────────────────────────────────────
+  async function runEmail() {
+    setLoading('em-btn', true);
+    document.getElementById('em-result').classList.remove('show');
+    try {
+      const fd = new FormData();
+      fd.append('situation',    document.getElementById('em-situation').value);
+      fd.append('first_name',   document.getElementById('em-name').value);
+      fd.append('officer_name', document.getElementById('em-officer').value);
+      fd.append('tone',         document.getElementById('em-tone').value);
+      fd.append('details',      document.getElementById('em-details').value);
+      if (qaSessionId) fd.append('session_id', qaSessionId);
+
+      const res  = await fetch('/api/customer-email', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+
+      document.getElementById('em-output').textContent = data.full_email;
+      document.getElementById('em-grounded-pill').style.display = data.grounded ? 'inline-flex' : 'none';
+      document.getElementById('em-result').classList.add('show');
+    } catch(e) { showErr('em-result', e.message); }
+    finally { setLoading('em-btn', false); }
+  }
+
+  // ── Q&A upload ─────────────────────────────────────────────────────
+  async function runQaUpload() {
+    const file = document.getElementById('qa-file').files[0];
+    if (!file) { toast('Please select a file first'); return; }
+    setLoading('qa-upload-btn', true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res  = await fetch('/api/qa/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+      _initQaSession(data.session_id, data.doc_id, file.name, `${data.chunks} chunks indexed · Ready to query`);
+    } catch(e) { toast(e.message); }
+    finally { setLoading('qa-upload-btn', false); }
+  }
+
+  function _initQaSession(sessionId, docId, filename, meta) {
+    qaSessionId = sessionId;
+    qaDocId     = docId;
+    qaFileName  = filename;
+    _chatMessages = [];
+
+    document.getElementById('qa-doc-name').textContent = filename;
+    document.getElementById('qa-doc-meta').textContent = meta;
+    document.getElementById('qa-upload-card').style.display = 'none';
+    document.getElementById('qa-chat-area').style.display   = 'block';
+    document.getElementById('qa-messages').innerHTML = '';
+    document.getElementById('qa-save-btn').style.display = 'none';
+    document.getElementById('qa-save-btn').classList.remove('saved');
+    document.getElementById('qa-save-btn').textContent = 'Save Chat';
+    const empty = document.getElementById('qa-empty');
+    if (empty) empty.style.display = 'flex';
+    document.getElementById('qa-question').focus();
+    _setGroundingBadges(filename);
+  }
+
+  // ── Q&A ask ────────────────────────────────────────────────────────
+  async function runQaAsk() {
+    const q = document.getElementById('qa-question').value.trim();
+    if (!q) return;
+
+    const msgs = document.getElementById('qa-messages');
+    const empty = document.getElementById('qa-empty');
+    if (empty) empty.style.display = 'none';
+
+    _chatMessages.push({ role: 'user', content: q });
+
+    msgs.innerHTML += `
+      <div class="bubble-row user">
+        <div class="bubble-avatar">You</div>
+        <div class="bubble">${escHtml(q)}</div>
+      </div>`;
+    document.getElementById('qa-question').value = '';
+
+    const typing = document.createElement('div');
+    typing.className = 'bubble-row assistant typing';
+    typing.innerHTML = `<div class="bubble-avatar">AI</div><div class="bubble">Thinking…</div>`;
+    msgs.appendChild(typing);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    const btn = document.getElementById('qa-ask-btn');
+    btn.disabled = true;
+
+    try {
+      const fd = new FormData();
+      fd.append('session_id', qaSessionId);
+      fd.append('question', q);
+      const res  = await fetch('/api/qa/ask', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Request failed');
+      typing.classList.remove('typing');
+      typing.querySelector('.bubble').textContent = data.answer;
+      _chatMessages.push({ role: 'assistant', content: data.answer });
+      // Show save button once there are messages
+      document.getElementById('qa-save-btn').style.display = 'inline-flex';
+    } catch(e) {
+      typing.classList.remove('typing');
+      typing.querySelector('.bubble').textContent = 'Error: ' + e.message;
+      typing.querySelector('.bubble').style.color = 'var(--red)';
+    } finally {
+      btn.disabled = false;
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+  }
+
+  // ── Save chat ──────────────────────────────────────────────────────
+  async function saveChat() {
+    if (!qaSessionId || _chatMessages.length === 0) return;
+    const btn = document.getElementById('qa-save-btn');
+    btn.textContent = 'Saving…';
+    try {
+      const fd = new FormData();
+      fd.append('session_id', qaSessionId);
+      fd.append('messages', JSON.stringify(_chatMessages));
+      const res = await fetch('/api/qa/save-chat', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error('Save failed');
+      btn.textContent = 'Chat Saved ✓';
+      btn.classList.add('saved');
+      toast('Chat transcript saved');
+    } catch(e) {
+      btn.textContent = 'Save Chat';
+      toast('Failed to save: ' + e.message);
+    }
+  }
+
+  function resetQa() {
+    qaSessionId = null;
+    qaFileName  = '';
+    qaDocId     = null;
+    _chatMessages = [];
+    document.getElementById('qa-upload-card').style.display = 'block';
+    document.getElementById('qa-chat-area').style.display   = 'none';
+    document.getElementById('qa-file').value = '';
+    showFileName('qa-file', 'qa-file-name');
+    _setGroundingBadges(null);
+  }
+
+  // ── History ────────────────────────────────────────────────────────
+  async function loadHistory() {
+    const list  = document.getElementById('history-list');
+    const count = document.getElementById('history-count');
+    list.innerHTML = '<p style="color:var(--text-3);font-size:.85rem">Loading…</p>';
+    try {
+      const res  = await fetch('/api/history');
+      const data = await res.json();
+      count.textContent = `${data.length} document${data.length !== 1 ? 's' : ''} in history`;
+
+      if (data.length === 0) {
+        list.innerHTML = `<div class="history-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <p>No documents yet. Upload a PDF or TXT file to get started.</p>
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = data.map(doc => _renderDocCard(doc)).join('');
+    } catch(e) {
+      list.innerHTML = `<p style="color:var(--red)">Failed to load history: ${escHtml(e.message)}</p>`;
+    }
+  }
+
+  function _renderDocCard(doc) {
+    const ext = doc.file_type || 'txt';
+    const iconClass = ext === 'pdf' ? 'pdf' : 'txt';
+    const iconSvg = ext === 'pdf'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+
+    const date = new Date(doc.uploaded_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const size = doc.file_size > 0 ? _fmtSize(doc.file_size) : '';
+    const meta = [date, size, doc.chunks > 0 ? `${doc.chunks} chunks` : ''].filter(Boolean).join(' · ');
+
+    const chips = [
+      doc.has_summary    ? '<span class="chip summary">Summary</span>'    : '',
+      doc.has_compliance ? '<span class="chip compliance">Compliance</span>' : '',
+      doc.has_vector_store ? '<span class="chip qa">Q&A Indexed</span>'   : '',
+    ].join('');
+
+    const actions = [];
+    if (doc.has_vector_store || doc.has_compliance) {
+      actions.push(`<button class="doc-action-btn primary" onclick="loadDocForQa('${doc.id}','${escAttr(doc.filename)}')">Load for Q&A</button>`);
+    }
+    if (doc.has_compliance) {
+      actions.push(`<button class="doc-action-btn" onclick="viewComplianceReport('${doc.id}')">View Compliance</button>`);
+    }
+    if (doc.has_summary) {
+      actions.push(`<button class="doc-action-btn" onclick="viewSummary('${doc.id}','${escAttr(doc.filename)}')">View Summary</button>`);
+    }
+    if (!doc.has_vector_store) {
+      actions.push(`<button class="doc-action-btn" onclick="loadDocForQa('${doc.id}','${escAttr(doc.filename)}')">Index & Load Q&A</button>`);
+    }
+
+    return `<div class="doc-card">
+      <div class="doc-icon ${iconClass}">${iconSvg}</div>
+      <div class="doc-info">
+        <div class="doc-name" title="${escAttr(doc.filename)}">${escHtml(doc.filename)}</div>
+        <div class="doc-meta">${escHtml(meta)}</div>
+        <div class="doc-chips">${chips || '<span style="font-size:.75rem;color:var(--text-3)">Uploaded</span>'}</div>
+      </div>
+      <div class="doc-actions">${actions.join('')}</div>
+    </div>`;
+  }
+
+  function _fmtSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  async function loadDocForQa(docId, filename) {
+    toast('Loading document…');
+    try {
+      const res  = await fetch(`/api/qa/load/${docId}`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Load failed');
+      _initQaSession(data.session_id, docId, data.filename, `${data.chunks || '?'} chunks · Loaded from history`);
+      // Switch to Q&A tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-qa').classList.add('active');
+      document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      toast(`"${filename}" loaded for Q&A`);
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  }
+
+  async function viewComplianceReport(docId) {
+    try {
+      const res  = await fetch(`/api/history/${docId}/compliance`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Not found');
+      _compData = data;
+      _renderComplianceResults(data.results, data.totals);
+      document.getElementById('comp-result').classList.add('show');
+      // Switch to compliance tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-compliance').classList.add('active');
+      document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  }
+
+  async function viewSummary(docId, filename) {
+    try {
+      const res  = await fetch(`/api/history/${docId}/summary`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Not found');
+      _briefRaw = data.summary;
+      document.getElementById('sum-output').innerHTML = markdownToHtml(_briefRaw);
+      document.getElementById('sum-output').style.display = 'block';
+      document.getElementById('sum-result').classList.add('show');
+      // Switch to summarize tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-summarize').classList.add('active');
+      document.querySelectorAll('.nav-btn')[0].classList.add('active');
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  }
+
+  // ── Grounding badges ───────────────────────────────────────────────
+  function _setGroundingBadges(filename) {
+    ['int', 'em'].forEach(prefix => {
+      const badge = document.getElementById(prefix + '-ground-badge');
+      const name  = document.getElementById(prefix + '-ground-name');
+      if (filename) {
+        name.textContent = filename;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s) {
+    return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

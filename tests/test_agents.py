@@ -6,9 +6,14 @@ To run: python -m pytest tests/ -v
 """
 
 import pytest
-from agents.customer_response_agent import _parse_email, CustomerEmail
-from agents.communication_agent import _parse_subject_body, list_situations, SITUATIONS
-from agents.compliance_checker import _parse_status, ComplianceResult, ComplianceReport
+from pydantic import ValidationError
+
+from agents.customer_response_agent import _parse_email, _build_details as email_build_details, CustomerEmail
+from agents.communication_agent import (
+    _parse_subject_body, _build_details as memo_build_details,
+    list_situations, SITUATIONS,
+)
+from agents.compliance_checker import _RuleCheck, ComplianceResult, ComplianceReport
 from metrics.tracker import WorkflowEvent
 
 
@@ -52,6 +57,24 @@ Thank you."""
     assert "documents were received" in email.full_email
 
 
+# ── Email detail enrichment ───────────────────────────────────────────────────
+
+def test_email_build_details_no_context():
+    result = email_build_details("Need W-2 by April 10.", "")
+    assert result == "Need W-2 by April 10."
+
+
+def test_email_build_details_with_context():
+    result = email_build_details("Need W-2.", "Borrower earns $8,500/mo.")
+    assert "Need W-2." in result
+    assert "Borrower earns $8,500/mo." in result
+
+
+def test_email_build_details_empty_base_falls_back():
+    result = email_build_details("", "")
+    assert result == "No additional details provided."
+
+
 # ── Communication parser ──────────────────────────────────────────────────────
 
 def test_parse_subject_body_splits_correctly():
@@ -73,21 +96,77 @@ def test_situations_dict_has_required_keys():
         assert "description" in info
 
 
-# ── Compliance status parser ──────────────────────────────────────────────────
+# ── Memo detail enrichment ────────────────────────────────────────────────────
 
-def test_parse_status_pass():
-    assert _parse_status("The DTI ratio is within limits and the borrower passes.") == "PASS"
-    assert _parse_status("Yes, the credit score meets the requirement.") == "PASS"
-
-
-def test_parse_status_fail():
-    assert _parse_status("The income documentation is missing from the file.") == "FAIL"
-    assert _parse_status("No W-2 was found in the submitted documents.") == "FAIL"
+def test_memo_build_details_no_context():
+    result = memo_build_details("Missing: W-2.", "")
+    assert result == "Missing: W-2."
 
 
-def test_parse_status_needs_review():
-    assert _parse_status("The document does not clearly state the LTV calculation.") == "NEEDS REVIEW"
-    assert _parse_status("Unclear from context provided.") == "NEEDS REVIEW"
+def test_memo_build_details_with_context():
+    result = memo_build_details("Escalation needed.", "Borrower DTI is 52%.")
+    assert "Escalation needed." in result
+    assert "Borrower DTI is 52%." in result
+
+
+def test_memo_build_details_empty_base_falls_back():
+    result = memo_build_details("", "")
+    assert result == "No additional details provided."
+
+
+# ── Compliance structured output model ───────────────────────────────────────
+
+def test_rule_check_valid_pass():
+    r = _RuleCheck(status="PASS", reasoning="DTI is 38%, below 43% threshold.")
+    assert r.status == "PASS"
+    assert "38%" in r.reasoning
+
+
+def test_rule_check_valid_fail():
+    r = _RuleCheck(status="FAIL", reasoning="LTV is 92%, exceeds 80% limit.")
+    assert r.status == "FAIL"
+
+
+def test_rule_check_valid_needs_review():
+    r = _RuleCheck(status="NEEDS REVIEW", reasoning="DTI figures not found in document.")
+    assert r.status == "NEEDS REVIEW"
+
+
+def test_rule_check_rejects_invalid_status():
+    with pytest.raises(ValidationError):
+        _RuleCheck(status="UNKNOWN", reasoning="Some text.")
+
+
+def test_rule_check_requires_reasoning():
+    with pytest.raises(ValidationError):
+        _RuleCheck(status="PASS")
+
+
+# ── Compliance report categorization ─────────────────────────────────────────
+
+def test_compliance_report_categorizes_results():
+    results = [
+        ComplianceResult("DTI", "PASS", "Within limits"),
+        ComplianceResult("LTV", "FAIL", "Exceeds limit"),
+        ComplianceResult("Docs", "NEEDS REVIEW", "Appraisal pending"),
+    ]
+    report = ComplianceReport("test.pdf", results)
+    assert len(report.passed) == 1
+    assert len(report.failed) == 1
+    assert len(report.needs_review) == 1
+
+
+def test_compliance_report_summary_contains_rule_names():
+    results = [
+        ComplianceResult("DTI Check", "PASS", "OK"),
+        ComplianceResult("LTV Check", "FAIL", "Too high"),
+    ]
+    report = ComplianceReport("loan.pdf", results)
+    summary = report.summary()
+    assert "DTI Check" in summary
+    assert "LTV Check" in summary
+    assert "PASS: 1" in summary
+    assert "FAIL: 1" in summary
 
 
 # ── Metrics ───────────────────────────────────────────────────────────────────
@@ -101,15 +180,3 @@ def test_workflow_event_accuracy_score():
 
     rejected = WorkflowEvent("2024-01-01", "summarization", False, False, 100)
     assert rejected.accuracy_score == 0.0
-
-
-def test_compliance_report_categorizes_results():
-    results = [
-        ComplianceResult("DTI", "PASS", "Within limits"),
-        ComplianceResult("LTV", "FAIL", "Exceeds limit"),
-        ComplianceResult("Docs", "NEEDS REVIEW", "Appraisal pending"),
-    ]
-    report = ComplianceReport("test.pdf", results)
-    assert len(report.passed) == 1
-    assert len(report.failed) == 1
-    assert len(report.needs_review) == 1
