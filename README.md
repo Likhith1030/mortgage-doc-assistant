@@ -182,8 +182,3 @@ Change the model in `.env` or `config.py`:
 
 ---
 
-## Security Notes
-
-- Your OpenAI API key is stored in `.env` — never commit this file to version control.
-- Document text is sent to OpenAI's API. Confirm your organization's data privacy agreement covers PHI/PII before uploading sensitive borrower documents.
-- The FAISS vector store on disk contains document embeddings but not plaintext — relatively safe, but treat it as sensitive data.
